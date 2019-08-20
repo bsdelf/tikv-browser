@@ -1,0 +1,63 @@
+.App-body-sider {
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-content: left;
+  height: 100%;
+  padding: 18px 0;
+}
+
+.Sider-header {
+  padding: 0 18px 0px 18px;
+  display: flex;
+  flex-direction: row;
+  align-items: left;
+  justify-content: left;
+}
+
+.Sider-header-title {
+  font-size: 18px;
+  color: rgb(0, 0, 0, 0.85);
+}
+
+.Sider-header-button {
+  margin-left: auto;
+}
+
+.Sider-item-header {
+  max-width: calc(220px - 18px * 2);
+  height: calc(18px + 2px * 2);
+  display: flex;
+  flex-direction: row;
+  align-items: left;
+  justify-content: left;
+}
+
+.Sider-item-header-title {
+  margin-right: 4px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.Sider-item-header-tools {
+  margin-left: auto;
+  display: none;
+}
+
+.ant-list-item:hover .Sider-item-header-tools {
+  display: flex;
+}
+
+.Sider-item-header-button {
+  margin-left: 4px;
+}
+
+.Sider-body {
+  padding: 0 18px 0 18px;
+  overflow-y: overlay;
+}
+
+.ant-tag {
+  margin-right: 4px;
+}

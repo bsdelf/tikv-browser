@@ -1,0 +1,60 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  min-height: 100vh;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 64px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+  font-size: calc(12px + 2vmin);
+  color: white;
+}
+
+.App-body {
+  display: flex;
+  flex-direction: row;
+  align-items: left;
+  flex-grow: 1;
+}
+
+.App-header-logo {
+  /* animation: App-logo-spin infinite 20s linear; */
+  /* height: 10vmin; */
+  pointer-events: none;
+  margin-left: 18px;
+}
+
+.App-header-menu {
+  margin: 0 18px 0 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.App-body-content {
+  flex-grow: 1;
+  padding: 12px 12px;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.App-line {
+  width: 1px;
+  background: silver;
+}
+
+.SearchFormWrapper {
+  max-width: 460px;
+}
+
+.SearchTableWrapper {
+  max-height: 600px;
+}
