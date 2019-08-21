@@ -25,25 +25,24 @@ const DataTab = (props: DataTabProps) => {
       span: 6,
     },
     wrapperCol: {
-      span: 14,
-    },
-  };
-
-  const tailFormItemLayout = {
-    wrapperCol: {
-      span: 14,
-      offset: 6,
+      span: 16,
     },
   };
 
   return (
-    <Form>
-      <Form.Item label="Size">{props.data.length}</Form.Item>
-      <Form.Item label="Encoding">encoding</Form.Item>
-      <Form.Item label="Contents">
-        <TextArea rows={3}></TextArea>
-      </Form.Item>
-    </Form>
+    <div>
+      <Form {...formItemLayout}>
+        <Form.Item label="Size" style={{ marginBottom: 12 }}>
+          {props.data.length} bytes
+        </Form.Item>
+        <Form.Item label="Encoding" style={{ marginBottom: 12 }}>
+          encoding
+        </Form.Item>
+        <Form.Item label="Contents" style={{ marginBottom: 12 }}>
+          <TextArea rows={8}></TextArea>
+        </Form.Item>
+      </Form>
+    </div>
   );
 };
 
@@ -55,7 +54,7 @@ export const KeyValueModal = observer((props: KeyValueModalProps) => {
     props.store.visiable = false;
   };
   return (
-    <Modal visible={props.store.visiable} onOk={onOk} onCancel={onCancel}>
+    <Modal visible={props.store.visiable} onOk={onOk} onCancel={onCancel} width={480} footer={null}>
       <Tabs defaultActiveKey="key">
         <TabPane tab="Key" key="key">
           <DataTab data={props.store.key} />

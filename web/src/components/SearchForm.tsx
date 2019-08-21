@@ -120,7 +120,7 @@ const SearchForm = ({ connection }: { connection: Connection }) => {
     };
     return (
       <TextArea
-        rows={3}
+        rows={4}
         placeholder={store.keyContentsPlaceholder}
         value={store.keyContents}
         onChange={onChange}
@@ -162,19 +162,19 @@ const SearchForm = ({ connection }: { connection: Connection }) => {
 
   return (
     <Form {...formItemLayout}>
-      <Form.Item label="Search Mode">
+      <Form.Item label="Search Mode" style={{ marginBottom: 12 }}>
         <SearchModeSelect />
       </Form.Item>
-      <Form.Item label="Key Encoding">
+      <Form.Item label="Key Encoding" style={{ marginBottom: 12 }}>
         <KeyEncodingSelect />
       </Form.Item>
-      <Form.Item label="Key Contents">
+      <Form.Item label="Key Contents" style={{ marginBottom: 12 }}>
         <KeyContentsTextArea />
       </Form.Item>
-      <Form.Item label="Results Limit">
+      <Form.Item label="Results Limit" style={{ marginBottom: 12 }}>
         <ResultsLimitSlider />
       </Form.Item>
-      <Form.Item {...tailFormItemLayout}>
+      <Form.Item {...tailFormItemLayout} style={{ marginBottom: 12 }}>
         <Row>
           <Col span={8}>
             <SearchButton />
