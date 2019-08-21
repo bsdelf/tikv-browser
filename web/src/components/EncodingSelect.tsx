@@ -19,7 +19,7 @@ export const encodings: Encoding[] = [
   {
     name: 'utf8',
     value: 'utf8',
-    placeholder: 'Input a human readable utf8 string here.',
+    placeholder: 'Input a human readable string here.',
   },
   {
     name: 'hex',
