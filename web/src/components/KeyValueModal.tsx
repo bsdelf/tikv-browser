@@ -1,7 +1,8 @@
 import React from 'react';
 import { Modal, Tabs, Form, Input } from 'antd';
-import { observer } from 'mobx-react-lite';
+import { observer, useLocalStore } from 'mobx-react-lite';
 import { encodings, EncodingSelect, Encoding } from './EncodingSelect';
+import { HumanReadableData } from '../utils';
 
 const { TabPane } = Tabs;
 const { TextArea } = Input;
@@ -20,7 +21,7 @@ interface DataTabProps {
   data: Uint8Array;
 }
 
-const DataTab = (props: DataTabProps) => {
+const DataTab = observer((props: DataTabProps) => {
   const formItemLayout = {
     labelCol: {
       span: 6,
@@ -30,27 +31,36 @@ const DataTab = (props: DataTabProps) => {
     },
   };
 
-  const defaultEncoding = encodings[0];
+  const store = useLocalStore(() => ({
+    value: '',
+  }));
+
   const onEncodingSelect = (encoding: Encoding) => {
-    console.log(encoding);
+    const data = new HumanReadableData({
+      data: props.data,
+      fromEncoding: encoding.value,
+    });
+    store.value = data.text;
+    console.log('changed', store.value);
   };
 
+  const defaultEncoding = encodings[0];
+  onEncodingSelect(defaultEncoding);
+
   return (
-    <div>
-      <Form {...formItemLayout}>
-        <Form.Item label="Size" style={{ marginBottom: 12 }}>
-          {props.data.length} bytes
-        </Form.Item>
-        <Form.Item label="Encoding" style={{ marginBottom: 12 }}>
-          <EncodingSelect defaultEncoding={defaultEncoding.name} onSelect={onEncodingSelect} />
-        </Form.Item>
-        <Form.Item label="Contents" style={{ marginBottom: 12 }}>
-          <TextArea rows={8} readOnly={true}></TextArea>
-        </Form.Item>
-      </Form>
-    </div>
+    <Form {...formItemLayout}>
+      <Form.Item label="Size" style={{ marginBottom: 12 }}>
+        {props.data.length} bytes
+      </Form.Item>
+      <Form.Item label="Encoding" style={{ marginBottom: 12 }}>
+        <EncodingSelect defaultEncoding={defaultEncoding.name} onSelect={onEncodingSelect} />
+      </Form.Item>
+      <Form.Item label="Contents" style={{ marginBottom: 12 }}>
+        <TextArea rows={8} readOnly={true} value={store.value} />
+      </Form.Item>
+    </Form>
   );
-};
+});
 
 export const KeyValueModal = observer((props: KeyValueModalProps) => {
   const onOk = () => {

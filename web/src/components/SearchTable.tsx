@@ -36,9 +36,6 @@ const ActionsRow = observer((props: ActionsRowProps) => {
 });
 
 const SearchTable = observer(({ connection }: { connection: Connection }) => {
-  const store = useLocalStore(() => ({
-    visiable: false,
-  }));
   const columns = [
     {
       title: 'Key',
