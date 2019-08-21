@@ -1,14 +1,44 @@
 import React from 'react';
 import { Table, Button, Row, Col } from 'antd';
 import { toJS } from 'mobx';
-import { observer } from 'mobx-react-lite';
+import { observer, useLocalStore } from 'mobx-react-lite';
 
 import { Connection } from '../store';
 import { PaginationConfig } from 'antd/lib/table';
+import { KeyValueModal } from './KeyValueModal';
 
 const pageSize = 10;
 
+interface ActionsRowProps {
+  data: SearchTableRowData;
+}
+
+const ActionsRow = observer((props: ActionsRowProps) => {
+  const store = useLocalStore(() => ({
+    visiable: false,
+    key: props.data.key,
+    value: props.data.value,
+  }));
+  const onClickEye = () => {
+    store.visiable = true;
+  };
+  return (
+    <Row>
+      <Col span={10}>
+        <Button size="small" icon="eye" onClick={onClickEye} />
+      </Col>
+      <Col span={10}>
+        <Button size="small" icon="delete" disabled={true} />
+      </Col>
+      <KeyValueModal store={store} />
+    </Row>
+  );
+});
+
 const SearchTable = observer(({ connection }: { connection: Connection }) => {
+  const store = useLocalStore(() => ({
+    visiable: false,
+  }));
   const columns = [
     {
       title: 'Key',
@@ -33,16 +63,7 @@ const SearchTable = observer(({ connection }: { connection: Connection }) => {
       width: '120px',
       dataIndex: 'data',
       render: (data: SearchTableRowData) => {
-        return (
-          <Row>
-            <Col span={10}>
-              <Button size="small" icon="eye" />
-            </Col>
-            <Col span={10}>
-              <Button size="small" icon="delete" disabled={true} />
-            </Col>
-          </Row>
-        );
+        return <ActionsRow data={data} />;
       },
     },
   ];
