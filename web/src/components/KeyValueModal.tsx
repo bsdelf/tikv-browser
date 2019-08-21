@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, Tabs, Form, Input } from 'antd';
 import { observer } from 'mobx-react-lite';
+import { encodings, EncodingSelect, Encoding } from './EncodingSelect';
 
 const { TabPane } = Tabs;
 const { TextArea } = Input;
@@ -29,6 +30,11 @@ const DataTab = (props: DataTabProps) => {
     },
   };
 
+  const defaultEncoding = encodings[0];
+  const onEncodingSelect = (encoding: Encoding) => {
+    console.log(encoding);
+  };
+
   return (
     <div>
       <Form {...formItemLayout}>
@@ -36,10 +42,10 @@ const DataTab = (props: DataTabProps) => {
           {props.data.length} bytes
         </Form.Item>
         <Form.Item label="Encoding" style={{ marginBottom: 12 }}>
-          encoding
+          <EncodingSelect defaultEncoding={defaultEncoding.name} onSelect={onEncodingSelect} />
         </Form.Item>
         <Form.Item label="Contents" style={{ marginBottom: 12 }}>
-          <TextArea rows={8}></TextArea>
+          <TextArea rows={8} readOnly={true}></TextArea>
         </Form.Item>
       </Form>
     </div>

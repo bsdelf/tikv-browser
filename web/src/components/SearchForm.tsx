@@ -3,6 +3,7 @@ import { action } from 'mobx';
 import { Form, Select, Input, Slider, Button, Row, Col } from 'antd';
 import { useLocalStore, observer } from 'mobx-react-lite';
 import { Connection } from '../store';
+import { encodings, EncodingSelect, Encoding } from './EncodingSelect';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -24,24 +25,7 @@ const SearchForm = ({ connection }: { connection: Connection }) => {
   ];
   const defaultSearchMode = searchModes[0];
 
-  const keyEncodings = [
-    {
-      name: 'utf8',
-      value: 'utf8',
-      placeholder: 'Input a human readable utf8 string here.',
-    },
-    {
-      name: 'hex',
-      value: 'hex',
-      placeholder: 'Input a hex encoded string here.',
-    },
-    {
-      name: 'base64',
-      value: 'base64',
-      placeholder: 'Input a base64 encoded string here.',
-    },
-  ];
-  const defaultKeyEncoding = keyEncodings[0];
+  const defaultKeyEncoding = encodings[0];
 
   const store = useLocalStore(() => ({
     searchMode: defaultSearchMode.value,
@@ -51,6 +35,11 @@ const SearchForm = ({ connection }: { connection: Connection }) => {
     resultsLimit: 1000,
     loading: false,
   }));
+
+  const onKeyEncodingSelect = (encoding: Encoding) => {
+    store.keyEncoding = encoding.value;
+    store.keyContentsPlaceholder = encoding.placeholder;
+  };
 
   const SearchButton = observer(() => {
     const onClick = async () => {
@@ -88,24 +77,6 @@ const SearchForm = ({ connection }: { connection: Connection }) => {
     return (
       <Select defaultValue={defaultSearchMode.name} onSelect={onSelect} value={store.searchMode}>
         {searchModes.map(item => (
-          <Option value={item.value} key={item.value}>
-            {item.name}
-          </Option>
-        ))}
-      </Select>
-    );
-  });
-
-  const KeyEncodingSelect = observer(() => {
-    const onSelect = action((value: string) => {
-      const option = keyEncodings.find(item => item.value === value) as any;
-      store.keyContentsPlaceholder = option.placeholder;
-      store.keyEncoding = value;
-      store.keyContents = '';
-    });
-    return (
-      <Select defaultValue={defaultKeyEncoding.name} onSelect={onSelect} value={store.keyEncoding}>
-        {keyEncodings.map(item => (
           <Option value={item.value} key={item.value}>
             {item.name}
           </Option>
@@ -166,7 +137,7 @@ const SearchForm = ({ connection }: { connection: Connection }) => {
         <SearchModeSelect />
       </Form.Item>
       <Form.Item label="Key Encoding" style={{ marginBottom: 12 }}>
-        <KeyEncodingSelect />
+        <EncodingSelect defaultEncoding={defaultKeyEncoding.name} onSelect={onKeyEncodingSelect} />
       </Form.Item>
       <Form.Item label="Key Contents" style={{ marginBottom: 12 }}>
         <KeyContentsTextArea />
