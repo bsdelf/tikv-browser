@@ -106,7 +106,7 @@ const DataTab = observer((props: DataTabProps) => {
       <Form.Item label="Contents" style={{ marginBottom: 12 }}>
         <TextArea rows={8} readOnly={true} value={store.value} />
       </Form.Item>
-      <Form.Item {...tailFormItemLayout} style={{ marginBottom: 12 }}>
+      <Form.Item {...tailFormItemLayout} style={{ marginBottom: 0 }}>
         <Row>
           <Col span={12}>
             <CopyButton text={store.value} />
