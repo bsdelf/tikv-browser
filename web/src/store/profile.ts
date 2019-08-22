@@ -1,12 +1,45 @@
-import { observable, action, runInAction } from 'mobx';
+import { observable, runInAction } from 'mobx';
 import * as service from '../service';
 import { connections } from './connection';
 
 class Profiles {
   public data = observable(new Array<Profile>());
 
-  public remove(profile: Profile) {
-    service
+  public async add(profile: Profile) {
+    await service
+      .getRPC()
+      .call('/profile/add', {
+        data: profile,
+      })
+      .then(() => {
+        runInAction(() => {
+          this.data.push(profile);
+        });
+      });
+  }
+
+  public async update(name: string, profile: Profile) {
+    await service
+      .getRPC()
+      .call('/profile/update', {
+        data: {
+          name,
+          profile,
+        },
+      })
+      .then(() => {
+        const idx = this.data.findIndex(item => item.name === name);
+        runInAction(() => {
+          for (const [k, v] of Object.entries(profile as Profile)) {
+            const obj = this.data[idx] as any;
+            obj[k] = v;
+          }
+        });
+      });
+  }
+
+  public async remove(profile: Profile) {
+    await service
       .getRPC()
       .call('/profile/delete', {
         data: {
@@ -24,15 +57,9 @@ class Profiles {
       });
   }
 
-  public save() {}
-
-  public add(...profiles: Profile[]) {
-    this.data.push(...profiles);
-  }
-
   public load() {
     const rpc = service.getRPC();
-    const fetch = action(async () => {
+    const fetch = async () => {
       try {
         const profiles = await rpc.call<Profile[]>('/profile/list');
         runInAction(() => {
@@ -46,7 +73,7 @@ class Profiles {
       } catch (err) {
         console.log(err);
       }
-    });
+    };
     (async () => {
       if (rpc.ready) {
         await fetch();

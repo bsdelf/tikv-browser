@@ -1,26 +1,41 @@
 import React from 'react';
-import { toJS } from 'mobx';
-import { observer } from 'mobx-react-lite';
+import { toJS, runInAction } from 'mobx';
+import { observer, useLocalStore } from 'mobx-react-lite';
 import { List, Button, Tag } from 'antd';
+import { ProfileModal } from './ProfileModal';
 import { connections, profiles } from '../store';
 
-const onConnect = (profile: Profile) => {
-  connections.add(profile.name, profile.endpoints);
-};
+export const ProfileList = observer(() => {
+  const emptyProfile: Profile = {
+    name: '',
+    endpoints: [],
+    tags: [],
+  };
+  const modalStore = useLocalStore(() => ({
+    visiable: false,
+    profile: emptyProfile,
+    resolve: (_: Profile) => Promise.resolve(),
+  }));
 
-const onEdit = (profile: Profile) => {
-  console.log('on edit', profile);
-};
+  const onConnect = (profile: Profile) => {
+    connections.add(profile.name, profile.endpoints);
+  };
 
-const onDelete = (profile: Profile) => {
-  profiles.remove(profile);
-};
+  const onEdit = (profile: Profile) => {
+    const name = profile.name;
+    runInAction(() => {
+      modalStore.visiable = true;
+      modalStore.profile = { ...profile };
+      modalStore.resolve = (profile: Profile) => profiles.update(name, profile);
+    });
+  };
 
-export const ProfileList = observer(() => (
-  <List
-    itemLayout="horizontal"
-    dataSource={toJS(profiles.data)}
-    renderItem={item => (
+  const onDelete = (profile: Profile) => {
+    profiles.remove(profile);
+  };
+
+  const listRender = (item: Profile) => {
+    return (
       <List.Item>
         <List.Item.Meta
           key={item.name}
@@ -47,16 +62,21 @@ export const ProfileList = observer(() => (
                   className="Sider-item-header-button"
                   onClick={onDelete.bind(undefined, item)}
                 ></Button>
+                <ProfileModal store={modalStore} />
               </div>
             </div>
           }
           description={item.tags.map(tag => (
-            <Tag key={tag}>{tag}</Tag>
+            <Tag key={tag.name} color={tag.color}>
+              {tag.name}
+            </Tag>
           ))}
         />
       </List.Item>
-    )}
-  />
-));
+    );
+  };
+
+  return <List itemLayout="horizontal" dataSource={toJS(profiles.data)} renderItem={listRender} />;
+});
 
 export default ProfileList;

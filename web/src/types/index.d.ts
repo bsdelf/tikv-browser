@@ -8,9 +8,14 @@ interface RpcCallOption {
   timeout?: number;
 }
 
+interface ProfileTag {
+  name: string;
+  color: string;
+}
+
 interface Profile {
   name: string;
-  tags: string[];
+  tags: ProfileTag[];
   endpoints: string[];
 }
 

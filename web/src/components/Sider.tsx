@@ -1,14 +1,36 @@
 import React from 'react';
 import { Button } from 'antd';
-import { ProfileList } from '.';
+import { runInAction } from 'mobx';
+import { useLocalStore } from 'mobx-react-lite';
+import { ProfileList } from './ProfileList';
+import { ProfileModal } from './ProfileModal';
+import { profiles } from '../store';
 
 import './Sider.css';
 
 const AddProfileButton = () => {
-  const onClick = () => {
-    console.log('add');
+  const emptyProfile: Profile = {
+    name: '',
+    tags: [],
+    endpoints: [],
   };
-  return <Button size="small" icon="plus" onClick={onClick}></Button>;
+  const store = useLocalStore(() => ({
+    visiable: false,
+    profile: emptyProfile,
+    resolve: (profile: Profile) => profiles.add(profile),
+  }));
+  const onClick = () => {
+    runInAction(() => {
+      store.profile = emptyProfile;
+      store.visiable = true;
+    });
+  };
+  return (
+    <div>
+      <Button size="small" icon="plus" onClick={onClick}></Button>
+      <ProfileModal store={store} />
+    </div>
+  );
 };
 
 export const Sider: React.FC = () => {

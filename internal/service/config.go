@@ -15,12 +15,17 @@ type Config struct {
 	Profiles []ConfigProfile `yaml:"profiles" json:"profiles" msgpack:"profiles"`
 }
 
+type ProfileTag struct {
+	Name  string `yaml:"name" json:"name" msgpack:"name"`
+	Color string `yaml:"color" json:"color" msgpack:"color"`
+}
+
 type ConfigProfile struct {
-	Name      string   `yaml:"name" json:"name" msgpack:"name"`
-	Tags      []string `yaml:"tags" json:"tags" msgpack:"tags"`
-	Endpoints []string `yaml:"endpoints" json:"endpoints" msgpack:"endpoints"`
-	CreatedAt *int64   `yaml:"createdAt" json:"createdAt" msgpack:"createdAt"`
-	UpdatedAt *int64   `yaml:"updatedAt" json:"updatedAt" msgpack:"updatedAt"`
+	Name      string       `yaml:"name" json:"name" msgpack:"name"`
+	Tags      []ProfileTag `yaml:"tags" json:"tags" msgpack:"tags"`
+	Endpoints []string     `yaml:"endpoints" json:"endpoints" msgpack:"endpoints"`
+	CreatedAt *int64       `yaml:"createdAt" json:"createdAt" msgpack:"createdAt"`
+	UpdatedAt *int64       `yaml:"updatedAt" json:"updatedAt" msgpack:"updatedAt"`
 }
 
 var (
@@ -36,7 +41,8 @@ address: ":3000"
 profiles:
   - name: "tikv@localhost"
     tags:
-      - "localhost"
+	  - name: "localhost"
+	    color: ""
     endpoints:
       - "localhost:2379"
 `
