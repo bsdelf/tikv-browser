@@ -6,8 +6,22 @@ class Profiles {
   public data = observable(new Array<Profile>());
 
   public remove(profile: Profile) {
-    const idx = this.data.findIndex(item => item.name === profile.name);
-    this.data.splice(idx, 1);
+    service
+      .getRPC()
+      .call('/profile/delete', {
+        data: {
+          name: profile.name,
+        },
+      })
+      .then(() => {
+        const idx = this.data.findIndex(item => item.name === profile.name);
+        runInAction(() => {
+          this.data.splice(idx, 1);
+        });
+      })
+      .catch(reason => {
+        alert(reason);
+      });
   }
 
   public save() {}
