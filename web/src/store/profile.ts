@@ -1,4 +1,4 @@
-import { observable, action } from 'mobx';
+import { observable, action, runInAction } from 'mobx';
 import * as service from '../service';
 import { connections } from './connection';
 
@@ -21,13 +21,14 @@ class Profiles {
     const fetch = action(async () => {
       try {
         const profiles = await rpc.call<Profile[]>('/profile/list');
-        this.data.clear();
-        this.data.push(...profiles);
-        if (profiles.length <= 0 || !connections.empty) {
-          return;
-        }
-        const firstProfile = profiles[0] as Profile;
-        connections.add(firstProfile.name, firstProfile.endpoints);
+        runInAction(() => {
+          this.data.replace(profiles);
+          if (profiles.length <= 0 || !connections.empty) {
+            return;
+          }
+          const firstProfile = profiles[0] as Profile;
+          connections.add(firstProfile.name, firstProfile.endpoints);
+        });
       } catch (err) {
         console.log(err);
       }

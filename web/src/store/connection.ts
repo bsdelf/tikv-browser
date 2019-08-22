@@ -1,5 +1,7 @@
-import { observable, action } from 'mobx';
+import { observable, action, runInAction } from 'mobx';
 import * as service from '../service';
+
+let id = 0;
 
 export class Connection {
   public id: string;
@@ -15,12 +17,15 @@ export class Connection {
   });
 
   public constructor(name: string, endpoints: string[]) {
-    this.id = Date.now().toString();
+    this.id = (++id).toString();
     this.name = name;
     this.endpoints = endpoints;
   }
 
+  @action
   public async search(option: SearchOption) {
+    this.clear();
+    this.loading.set(true);
     await service
       .getRPC()
       .call('/tikv/search', {
@@ -31,24 +36,25 @@ export class Connection {
       })
       .then(
         action((result: SearchResult) => {
-          this.keys.clear();
-          this.keys.push(...(result.keys || []));
-          if (this.keys.length <= 0) {
-            this.clear();
-            return;
-          }
-          this.pagination.current = 1;
-          this.pagination.total = this.keys.length;
-          this.loading.set(true);
-          this.fetchPage({
+          this.keys.replace(result.keys || []);
+        })
+      )
+      .catch(reason => {
+        alert(reason);
+      })
+      .then(
+        action(() => {
+          return this.fetchPage({
             page: 1,
             size: this.pagination.pageSize,
           });
         })
       )
-      .catch(err => {
-        alert(err);
-      });
+      .then(
+        action(() => {
+          this.loading.set(false);
+        })
+      );
   }
 
   @action
@@ -57,13 +63,20 @@ export class Connection {
     this.pagination.total = 0;
     this.keys.clear();
     this.rows.clear();
+    this.loading.set(false);
   }
 
-  public fetchPage(option: FetchPageOption) {
+  @action
+  public async fetchPage(option: FetchPageOption) {
+    if (this.keys.length <= 0) {
+      return;
+    }
     const begin = (option.page - 1) * option.size;
     const end = begin + option.size;
     const keys = this.keys.slice(begin, end);
-    service
+    this.rows.clear();
+    this.loading.set(true);
+    await service
       .getRPC()
       .call('/tikv/get', {
         data: {
@@ -72,21 +85,23 @@ export class Connection {
         },
       })
       .then((result: TikvGetResult) => {
-        const rows = result.rows.map((item, idx) => ({
+        const rows = (result.rows || []).map((item, idx) => ({
           key: idx.toString(),
           data: item,
         }));
-        action(() => {
-          this.rows.clear();
-          this.rows.push(...rows);
+        runInAction(() => {
+          this.rows.replace(rows);
           this.loading.set(false);
           this.pagination.current = option.page;
-        })();
+          this.pagination.total = this.keys.length;
+        });
       })
       .catch(err => {
-        this.loading.set(false);
         alert(err);
       });
+    runInAction(() => {
+      this.loading.set(false);
+    });
   }
 }
 

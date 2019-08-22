@@ -1,6 +1,6 @@
 import React from 'react';
-import { action } from 'mobx';
 import { Form, Select, Input, Slider, Button, Row, Col } from 'antd';
+import { action, runInAction } from 'mobx';
 import { useLocalStore, observer } from 'mobx-react-lite';
 import { Connection } from '../store';
 import { encodings, EncodingSelect, Encoding } from './EncodingSelect';
@@ -37,23 +37,30 @@ const SearchForm = ({ connection }: { connection: Connection }) => {
   }));
 
   const onKeyEncodingSelect = (encoding: Encoding) => {
-    store.keyEncoding = encoding.value;
-    store.keyContentsPlaceholder = encoding.placeholder;
+    runInAction(() => {
+      store.keyEncoding = encoding.value;
+      store.keyContents = '';
+      store.keyContentsPlaceholder = encoding.placeholder;
+    });
   };
 
   const SearchButton = observer(() => {
-    const onClick = async () => {
-      try {
+    const onClick = () => {
+      runInAction(() => {
         store.loading = true;
-        await connection.search({
-          mode: store.searchMode,
-          encoding: store.keyEncoding,
-          contents: store.keyContents,
-          limit: store.resultsLimit,
-        });
-      } finally {
-        store.loading = false;
-      }
+        connection
+          .search({
+            mode: store.searchMode,
+            encoding: store.keyEncoding,
+            contents: store.keyContents,
+            limit: store.resultsLimit,
+          })
+          .then(
+            action(() => {
+              store.loading = false;
+            })
+          );
+      });
     };
     return (
       <Button type="primary" onClick={onClick} loading={store.loading}>
@@ -64,7 +71,9 @@ const SearchForm = ({ connection }: { connection: Connection }) => {
 
   const ClearButton = () => {
     const onClick = () => {
-      store.keyContents = '';
+      runInAction(() => {
+        store.keyContents = '';
+      });
       connection.clear();
     };
     return <Button onClick={onClick}>Clear</Button>;
@@ -72,7 +81,9 @@ const SearchForm = ({ connection }: { connection: Connection }) => {
 
   const SearchModeSelect = observer(() => {
     const onSelect = (value: string) => {
-      store.searchMode = value;
+      runInAction(() => {
+        store.searchMode = value;
+      });
     };
     return (
       <Select defaultValue={defaultSearchMode.name} onSelect={onSelect} value={store.searchMode}>
@@ -87,7 +98,9 @@ const SearchForm = ({ connection }: { connection: Connection }) => {
 
   const KeyContentsTextArea = observer(() => {
     const onChange = (event: any) => {
-      store.keyContents = event.target.value;
+      runInAction(() => {
+        store.keyContents = event.target.value;
+      });
     };
     return (
       <TextArea
@@ -101,7 +114,9 @@ const SearchForm = ({ connection }: { connection: Connection }) => {
 
   const ResultsLimitSlider = observer(() => {
     const onChange = (value: any) => {
-      store.resultsLimit = value;
+      runInAction(() => {
+        store.resultsLimit = value;
+      });
     };
     return (
       <Slider

@@ -1,9 +1,15 @@
 import React, { useEffect } from 'react';
+import { configure } from 'mobx';
+
 import { LocaleDropdown, Sider, ConnectionTabs } from './components';
 import { profiles } from './store';
 
 import 'antd/dist/antd.css';
 import './App.css';
+
+configure({
+  enforceActions: 'observed',
+});
 
 const App: React.FC = () => {
   useEffect(() => {

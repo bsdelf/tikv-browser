@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table, Button, Row, Col } from 'antd';
-import { toJS } from 'mobx';
+import { runInAction, toJS } from 'mobx';
 import { observer, useLocalStore } from 'mobx-react-lite';
 
 import { Connection } from '../store';
@@ -13,14 +13,16 @@ interface ActionsRowProps {
   data: SearchTableRowData;
 }
 
-const ActionsRow = observer((props: ActionsRowProps) => {
+const ActionsRow = (props: ActionsRowProps) => {
   const store = useLocalStore(() => ({
     visiable: false,
     key: props.data.key,
     value: props.data.value,
   }));
   const onClickEye = () => {
-    store.visiable = true;
+    runInAction(() => {
+      store.visiable = true;
+    });
   };
   return (
     <Row>
@@ -33,7 +35,9 @@ const ActionsRow = observer((props: ActionsRowProps) => {
       <KeyValueModal store={store} />
     </Row>
   );
-});
+};
+
+let id = 0;
 
 const SearchTable = observer(({ connection }: { connection: Connection }) => {
   const columns = [
@@ -60,7 +64,7 @@ const SearchTable = observer(({ connection }: { connection: Connection }) => {
       width: '120px',
       dataIndex: 'data',
       render: (data: SearchTableRowData) => {
-        return <ActionsRow data={data} />;
+        return <ActionsRow key={++id} data={data} />;
       },
     },
   ];

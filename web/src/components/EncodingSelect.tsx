@@ -1,5 +1,6 @@
 import React from 'react';
 import { Select } from 'antd';
+import { runInAction } from 'mobx';
 import { useLocalStore, observer } from 'mobx-react-lite';
 
 const { Option } = Select;
@@ -38,7 +39,9 @@ export const EncodingSelect = observer((props: EncodingSelectProps) => {
     value: props.defaultEncoding,
   }));
   const onSelect = (value: string) => {
-    store.value = value;
+    runInAction(() => {
+      store.value = value;
+    });
     const item = encodings.find(item => item.value === value);
     if (item && typeof props.onSelect === 'function') {
       props.onSelect(item);

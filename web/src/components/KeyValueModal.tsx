@@ -1,6 +1,9 @@
 import React from 'react';
-import { Modal, Tabs, Form, Input } from 'antd';
+import { Modal, Tabs, Form, Input, Row, Col, Button } from 'antd';
+import { runInAction } from 'mobx';
 import { observer, useLocalStore } from 'mobx-react-lite';
+import CopyToClipboard from 'react-copy-to-clipboard';
+
 import { encodings, EncodingSelect, Encoding } from './EncodingSelect';
 import { HumanReadableData } from '../utils';
 
@@ -18,8 +21,42 @@ interface KeyValueModalProps {
 }
 
 interface DataTabProps {
+  name: string;
   data: Uint8Array;
 }
+
+interface DownloadButtonProps {
+  name: string;
+  data: Uint8Array;
+}
+
+const DownloadButton = (props: DownloadButtonProps) => {
+  const onClick = () => {
+    const fileName = `${props.name}.bin`;
+    const blob = new Blob([props.data], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', fileName);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  return <Button onClick={onClick}>Download Raw</Button>;
+};
+
+interface CopyButtonProps {
+  text: string;
+}
+
+const CopyButton = observer((props: CopyButtonProps) => {
+  return (
+    <CopyToClipboard text={props.text}>
+      <Button>Copy Contents</Button>
+    </CopyToClipboard>
+  );
+});
 
 const DataTab = observer((props: DataTabProps) => {
   const formItemLayout = {
@@ -31,8 +68,21 @@ const DataTab = observer((props: DataTabProps) => {
     },
   };
 
+  const tailFormItemLayout = {
+    wrapperCol: {
+      span: 16,
+      offset: 6,
+    },
+  };
+
+  const defaultEncoding = encodings[0];
+  const data = new HumanReadableData({
+    data: props.data,
+    fromEncoding: defaultEncoding.value,
+  });
+
   const store = useLocalStore(() => ({
-    value: '',
+    value: data.text,
   }));
 
   const onEncodingSelect = (encoding: Encoding) => {
@@ -40,12 +90,10 @@ const DataTab = observer((props: DataTabProps) => {
       data: props.data,
       fromEncoding: encoding.value,
     });
-    store.value = data.text;
-    console.log('changed', store.value);
+    runInAction(() => {
+      store.value = data.text;
+    });
   };
-
-  const defaultEncoding = encodings[0];
-  onEncodingSelect(defaultEncoding);
 
   return (
     <Form {...formItemLayout}>
@@ -58,25 +106,39 @@ const DataTab = observer((props: DataTabProps) => {
       <Form.Item label="Contents" style={{ marginBottom: 12 }}>
         <TextArea rows={8} readOnly={true} value={store.value} />
       </Form.Item>
+      <Form.Item {...tailFormItemLayout} style={{ marginBottom: 12 }}>
+        <Row>
+          <Col span={12}>
+            <CopyButton text={store.value} />
+          </Col>
+          <Col span={10}>
+            <DownloadButton name={props.name} data={props.data} />
+          </Col>
+        </Row>
+      </Form.Item>
     </Form>
   );
 });
 
 export const KeyValueModal = observer((props: KeyValueModalProps) => {
   const onOk = () => {
-    props.store.visiable = false;
+    runInAction(() => {
+      props.store.visiable = false;
+    });
   };
   const onCancel = () => {
-    props.store.visiable = false;
+    runInAction(() => {
+      props.store.visiable = false;
+    });
   };
   return (
     <Modal visible={props.store.visiable} onOk={onOk} onCancel={onCancel} width={480} footer={null}>
       <Tabs defaultActiveKey="key">
         <TabPane tab="Key" key="key">
-          <DataTab data={props.store.key} />
+          <DataTab name="key" data={props.store.key} />
         </TabPane>
         <TabPane tab="Value" key="value">
-          <DataTab data={props.store.value} />
+          <DataTab name="value" data={props.store.value} />
         </TabPane>
       </Tabs>
     </Modal>

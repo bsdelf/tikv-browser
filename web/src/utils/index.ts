@@ -1,3 +1,5 @@
+import { fromByteArray } from 'base64-js';
+
 export interface HumanReadableDataOption {
   data: Uint8Array;
   fromEncoding: string;
@@ -24,6 +26,7 @@ export class HumanReadableData {
         break;
       }
       case 'base64': {
+        this.text = fromByteArray(this.data);
         break;
       }
       default: {
