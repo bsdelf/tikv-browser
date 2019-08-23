@@ -20,17 +20,17 @@ export const encodings: Encoding[] = [
   {
     name: 'utf8',
     value: 'utf8',
-    placeholder: 'Input a human readable string here',
+    placeholder: 'human readable string',
   },
   {
     name: 'hex',
     value: 'hex',
-    placeholder: 'Input a hex encoded string here',
+    placeholder: 'hex encoded string',
   },
   {
     name: 'base64',
     value: 'base64',
-    placeholder: 'Input a base64 encoded string here',
+    placeholder: 'base64 encoded string',
   },
 ];
 

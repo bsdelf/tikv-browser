@@ -64,10 +64,6 @@ export const ProfileModal = observer((props: ProfileModalProps) => {
   const onClose = () => {
     runInAction(() => {
       props.store.visiable = false;
-      // store.name = '';
-      // store.endpoints = '';
-      // store.tags = '';
-      // store.loading = false;
     });
   };
 

@@ -53,3 +53,8 @@ interface SearchTableRow {
   key: string;
   data: SearchTableRowData;
 }
+
+interface SearchTableCell {
+  name: string;
+  data: Uint8Array;
+}

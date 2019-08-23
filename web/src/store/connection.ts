@@ -9,6 +9,7 @@ export class Connection {
   public endpoints: string[];
   public keys = observable(new Array<Uint8Array>());
   public rows = observable(new Array<SearchTableRow>());
+  public cell = observable({ name: '', data: Uint8Array.from([]) });
   public loading = observable.box(false);
   public pagination = observable({
     current: 0,
@@ -63,6 +64,8 @@ export class Connection {
     this.pagination.total = 0;
     this.keys.clear();
     this.rows.clear();
+    this.cell.name = '';
+    this.cell.data = Uint8Array.from([]);
     this.loading.set(false);
   }
 
@@ -75,6 +78,8 @@ export class Connection {
     const end = begin + option.size;
     const keys = this.keys.slice(begin, end);
     this.rows.clear();
+    this.cell.name = '';
+    this.cell.data = Uint8Array.from([]);
     this.loading.set(true);
     await service
       .getRPC()

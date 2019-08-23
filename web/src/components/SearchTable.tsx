@@ -1,11 +1,10 @@
 import React from 'react';
-import { Table, Button, Row, Col } from 'antd';
+import { Table, Button, Row, Col, Popconfirm } from 'antd';
 import { runInAction, toJS } from 'mobx';
-import { observer, useLocalStore } from 'mobx-react-lite';
+import { observer } from 'mobx-react-lite';
 
 import { Connection } from '../store';
 import { PaginationConfig } from 'antd/lib/table';
-import { KeyValueModal } from './KeyValueModal';
 
 const pageSize = 10;
 
@@ -14,25 +13,36 @@ interface ActionsRowProps {
 }
 
 const ActionsRow = (props: ActionsRowProps) => {
-  const store = useLocalStore(() => ({
-    visiable: false,
-    key: props.data.key,
-    value: props.data.value,
-  }));
-  const onClickEye = () => {
-    runInAction(() => {
-      store.visiable = true;
-    });
+  const onClick = (name: string, data: Uint8Array) => {
+    const fileName = `${name}.bin`;
+    const blob = new Blob([data], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', fileName);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
+  const onClickKey = () => onClick('key', props.data.key);
+  const onClickValue = () => onClick('value', props.data.value);
   return (
     <Row>
-      <Col span={10}>
-        <Button size="small" icon="eye" onClick={onClickEye} />
+      <Col span={12}>
+        <Popconfirm
+          title="Which one?"
+          okText="Value"
+          cancelText="Key"
+          onConfirm={onClickValue}
+          onCancel={onClickKey}
+        >
+          <Button size="small" icon="download"></Button>
+        </Popconfirm>
       </Col>
-      <Col span={10}>
+      <Col span={12}>
         <Button size="small" icon="delete" disabled={true} />
       </Col>
-      <KeyValueModal store={store} />
     </Row>
   );
 };
@@ -47,7 +57,14 @@ const SearchTable = observer(({ connection }: { connection: Connection }) => {
       width: '30%',
       dataIndex: 'data.key',
       render: (data: Uint8Array) => {
-        return new TextDecoder('utf-8').decode(data);
+        const onClick = () => {
+          runInAction(() => {
+            connection.cell.name = 'key';
+            connection.cell.data = data;
+          });
+        };
+        const text = new TextDecoder('utf-8').decode(data);
+        return <span onClick={onClick}>{text}</span>;
       },
     },
     {
@@ -55,7 +72,14 @@ const SearchTable = observer(({ connection }: { connection: Connection }) => {
       key: 'value',
       dataIndex: 'data.value',
       render: (data: Uint8Array) => {
-        return new TextDecoder('utf-8').decode(data);
+        const onClick = () => {
+          runInAction(() => {
+            connection.cell.name = 'value';
+            connection.cell.data = data;
+          });
+        };
+        const text = new TextDecoder('utf-8').decode(data);
+        return <span onClick={onClick}>{text}</span>;
       },
     },
     {

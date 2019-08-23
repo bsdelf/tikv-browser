@@ -132,17 +132,17 @@ const SearchForm = ({ connection }: { connection: Connection }) => {
 
   const formItemLayout = {
     labelCol: {
-      span: 6,
+      span: 8,
     },
     wrapperCol: {
-      span: 14,
+      span: 16,
     },
   };
 
   const tailFormItemLayout = {
     wrapperCol: {
-      span: 14,
-      offset: 6,
+      span: 16,
+      offset: 8,
     },
   };
 
@@ -161,11 +161,11 @@ const SearchForm = ({ connection }: { connection: Connection }) => {
         <ResultsLimitSlider />
       </Form.Item>
       <Form.Item {...tailFormItemLayout} style={{ marginBottom: 12 }}>
-        <Row>
-          <Col span={8}>
+        <Row gutter={16}>
+          <Col span={10}>
             <SearchButton />
           </Col>
-          <Col span={8}>
+          <Col span={10}>
             <ClearButton />
           </Col>
         </Row>

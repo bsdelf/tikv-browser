@@ -5,6 +5,7 @@ import { observer, useLocalStore } from 'mobx-react-lite';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
 import { encodings, EncodingSelect, Encoding } from './EncodingSelect';
+import DownloadButton from './DownloadButton';
 import { HumanReadableData } from '../utils';
 
 const { TabPane } = Tabs;
@@ -24,27 +25,6 @@ interface DataTabProps {
   name: string;
   data: Uint8Array;
 }
-
-interface DownloadButtonProps {
-  name: string;
-  data: Uint8Array;
-}
-
-const DownloadButton = (props: DownloadButtonProps) => {
-  const onClick = () => {
-    const fileName = `${props.name}.bin`;
-    const blob = new Blob([props.data], { type: 'application/octet-stream' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', fileName);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-  return <Button onClick={onClick}>Download Raw</Button>;
-};
 
 interface CopyButtonProps {
   text: string;
