@@ -35,8 +35,8 @@ export class Connection {
         },
       })
       .then(
-        action((result: SearchResult) => {
-          this.keys.replace(result.keys || []);
+        action((result: Uint8Array[]) => {
+          this.keys.replace(result || []);
         })
       )
       .catch(reason => {

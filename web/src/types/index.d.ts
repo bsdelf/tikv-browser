@@ -26,10 +26,6 @@ interface SearchOption {
   limit: number;
 }
 
-interface SearchResult {
-  keys: Uint8Array[];
-}
-
 interface FetchPageOption {
   page: number;
   size: number;

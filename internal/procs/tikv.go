@@ -84,9 +84,7 @@ func tikvSearch(inputBytes []byte) ([]byte, error) {
 		Limit     int      `msgpack:"limit"`
 	}
 
-	type OutputMessage struct {
-		Keys [][]byte `msgpack:"keys"`
-	}
+	type OutputMessage = [][]byte
 
 	var inputMessage InputMessage
 	if err := msgpack.Unmarshal(inputBytes, &inputMessage); err != nil {
@@ -115,23 +113,23 @@ func tikvSearch(inputBytes []byte) ([]byte, error) {
 	}
 
 	var callbackErr error
-	outputMessage := OutputMessage{}
+	var outputMessage OutputMessage
 	service.UseTikvClient(inputMessage.Endpoints, func(client *txnkv.Client, err error) {
 		switch inputMessage.Mode {
 		case "scan":
 			{
-				outputMessage.Keys, callbackErr = tikvSearchRange(client, contents, inputMessage.Limit)
+				outputMessage, callbackErr = tikvSearchRange(client, contents, inputMessage.Limit)
 			}
 		case "prefix":
 			{
-				outputMessage.Keys, callbackErr = tikvSearchPrefix(client, contents, inputMessage.Limit)
+				outputMessage, callbackErr = tikvSearchPrefix(client, contents, inputMessage.Limit)
 			}
 		case "whole":
 			{
 				found, err := tikvSearchWhole(client, contents)
 				callbackErr = err
 				if found {
-					outputMessage.Keys = append(outputMessage.Keys, contents)
+					outputMessage = [][]byte{contents}
 				}
 			}
 		default:
