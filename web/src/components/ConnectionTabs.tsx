@@ -1,5 +1,5 @@
 import React from 'react';
-import { toJS } from 'mobx';
+import { toJS, runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { Tabs } from 'antd';
 import { connections } from '../store';
@@ -8,7 +8,9 @@ import ConnectionTab from './ConnectionTab';
 const { TabPane } = Tabs;
 
 const onChange = (key: string) => {
-  connections.activeId.set(key);
+  runInAction(() => {
+    connections.activeId.set(key);
+  });
 };
 
 const onEdit = (key: any, action: string) => {
