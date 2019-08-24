@@ -115,6 +115,10 @@ func tikvSearch(inputBytes []byte) ([]byte, error) {
 	var callbackErr error
 	var outputMessage OutputMessage
 	service.UseTikvClient(inputMessage.Endpoints, func(client *txnkv.Client, err error) {
+		if err != nil {
+			callbackErr = err
+			return
+		}
 		switch inputMessage.Mode {
 		case "scan":
 			{
