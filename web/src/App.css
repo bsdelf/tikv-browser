@@ -48,6 +48,7 @@
 
 .App-line {
   width: 1px;
+  min-width: 1px;
   background: silver;
 }
 
