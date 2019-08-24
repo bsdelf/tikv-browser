@@ -64,8 +64,7 @@ func (s *Session) Run() {
 
 		start := time.Now()
 		outputMessage := OutputMessage{ID: inputMessage.ID}
-		proc, ok := procMap[inputMessage.Proc]
-		if ok {
+		if proc, ok := procMap[inputMessage.Proc]; ok {
 			outputData, err := proc(inputMessage.Data)
 			outputMessage.Data = outputData
 			if err != nil {
