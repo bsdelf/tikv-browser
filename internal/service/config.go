@@ -34,18 +34,8 @@ var (
 )
 
 const (
-	configPerm           = 0600
-	configName           = ".tikv-browser"
-	configDefaultContent = `version: 1
-address: ":3000"
-profiles:
-  - name: "tikv@localhost"
-    tags:
-	  - name: "localhost"
-	    color: ""
-    endpoints:
-      - "localhost:2379"
-`
+	configPerm = 0600
+	configName = ".tikv-browser"
 )
 
 func init() {
@@ -55,6 +45,27 @@ func init() {
 			GetLogger().Panic(err)
 		}
 		return path.Join(me.HomeDir, configName)
+	}
+}
+
+func buildDefaultConfig() *Config {
+	return &Config{
+		Version: 1,
+		Address: ":3000",
+		Profiles: []ConfigProfile{
+			ConfigProfile{
+				Name: "tikv@localhost",
+				Tags: []ProfileTag{
+					ProfileTag{
+						Name:  "localhost",
+						Color: "",
+					},
+				},
+				Endpoints: []string{
+					"localhost:2379",
+				},
+			},
+		},
 	}
 }
 
@@ -69,7 +80,10 @@ func InitConfig() {
 			GetLogger().Panic(err)
 		}
 		GetLogger().Info("create default config: ", configPath)
-		bytes := []byte(configDefaultContent)
+		bytes, err := yaml.Marshal(buildDefaultConfig())
+		if err != nil {
+			GetLogger().Panic(err)
+		}
 		if err := ioutil.WriteFile(configPath, bytes, configPerm); err != nil {
 			GetLogger().Panic(err)
 		}
