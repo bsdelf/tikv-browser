@@ -57,10 +57,12 @@ func (s *Session) Run() {
 
 		var inputMessage InputMessage
 		if err := msgpack.Unmarshal(inputBytes, &inputMessage); err != nil {
+			logger.Error(err)
 			continue
 		}
-		logger.Info(fmt.Sprintf(">>> %v, %v bytes", inputMessage.Proc, len(inputBytes)))
+		logger.Info(fmt.Sprintf(">>> %v: %v bytes", inputMessage.Proc, len(inputBytes)))
 
+		start := time.Now()
 		outputMessage := OutputMessage{ID: inputMessage.ID}
 		proc, ok := procMap[inputMessage.Proc]
 		if ok {
@@ -72,14 +74,16 @@ func (s *Session) Run() {
 		} else {
 			outputMessage.Error = "proc not found"
 		}
+		elapsed := time.Now().Sub(start).Truncate(time.Microsecond)
+		logger.Info(fmt.Sprintf("    %v: %v", inputMessage.Proc, elapsed.String()))
 
 		outputBytes, err := msgpack.Marshal(&outputMessage)
 		if err != nil {
 			logger.Error(err)
 			continue
 		}
+		logger.Info(fmt.Sprintf("<<< %v: %v bytes", inputMessage.Proc, len(outputBytes)))
 
-		logger.Info(fmt.Sprintf("<<< %v, %v bytes", inputMessage.Proc, len(outputBytes)))
 		err = wsutil.WriteServerMessage(s.conn, op, outputBytes)
 		if err != nil {
 			logger.Error(err)
