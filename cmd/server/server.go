@@ -17,6 +17,9 @@ func startServer() {
 	logger := service.GetLogger()
 	logger.Info("start http: ", addr)
 
+	fileServer := http.FileServer(http.Dir("./web"))
+	http.Handle("/", fileServer)
+
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		session, err := NewSession(w, r)
 		if err != nil {
