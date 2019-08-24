@@ -49,6 +49,33 @@ const ActionsRow = (props: ActionsRowProps) => {
 
 let id = 0;
 
+const toText = (data: Uint8Array, limit: number) => {
+  if (data.length > 64) {
+    return '<blob>';
+  }
+  let text = new TextDecoder('utf-8').decode(data);
+  if (text.length > limit) {
+    text = text.substr(0, limit - 3) + '...';
+  }
+  return text;
+};
+
+const toSpan = (data: Uint8Array, limit: number, onClick: () => void) => {
+  let style = {};
+  let text: string;
+  if (data.length > 1024) {
+    text = '<blob>';
+    style = { fontStyle: 'italic', color: 'gray' };
+  } else {
+    text = toText(data, limit);
+  }
+  return (
+    <span onClick={onClick} style={style}>
+      {text}
+    </span>
+  );
+};
+
 const SearchTable = observer(({ connection }: { connection: Connection }) => {
   const columns = [
     {
@@ -63,8 +90,7 @@ const SearchTable = observer(({ connection }: { connection: Connection }) => {
             connection.cell.data = data;
           });
         };
-        const text = new TextDecoder('utf-8').decode(data);
-        return <span onClick={onClick}>{text}</span>;
+        return toSpan(data, 32, onClick);
       },
     },
     {
@@ -78,8 +104,7 @@ const SearchTable = observer(({ connection }: { connection: Connection }) => {
             connection.cell.data = data;
           });
         };
-        const text = new TextDecoder('utf-8').decode(data);
-        return <span onClick={onClick}>{text}</span>;
+        return toSpan(data, 64, onClick);
       },
     },
     {
