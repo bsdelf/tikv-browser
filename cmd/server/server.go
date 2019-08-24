@@ -3,12 +3,13 @@ package main
 import (
 	"context"
 	"net/http"
+	"sync"
 	"tikv-browser/internal/service"
 )
 
 var (
 	httpServer *http.Server
-	wsSessions = map[string]*Session{}
+	wsSessions = sync.Map{}
 )
 
 func startServer() {
@@ -23,12 +24,15 @@ func startServer() {
 			return
 		}
 
-		addr := session.RemoteAddr().String()
-		wsSessions[addr] = session
-		logger.Info("new session: ", addr)
+		remoteAddr := session.RemoteAddr().String()
+		if _, loaded := wsSessions.LoadOrStore(remoteAddr, session); loaded {
+			logger.Error("duplicate session: ", remoteAddr)
+			return
+		}
 
+		logger.Info("new session: ", remoteAddr)
 		cleanup := func() {
-			delete(wsSessions, addr)
+			wsSessions.Delete(remoteAddr)
 			session.Stop()
 		}
 		go func() {
@@ -51,10 +55,9 @@ func stopServer() {
 	if err := httpServer.Shutdown(context.TODO()); err != nil {
 		logger.Error(err)
 	}
-
-	for addr, session := range wsSessions {
-		logger.Info("close ws", addr)
-		session.Stop()
-	}
-	wsSessions = map[string]*Session{}
+	wsSessions.Range(func(key interface{}, value interface{}) bool {
+		logger.Info("close ws: ", key.(string))
+		value.(*Session).Stop()
+		return true
+	})
 }
