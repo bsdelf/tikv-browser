@@ -51,7 +51,6 @@ export const HexdumpTextArea = observer((props: HexdumpTextAreaProps) => {
         });
         return;
       }
-
       const text = `${cell.name}: ${cell.data.length} bytes\n\n${toHexdump(cell.data)}`;
       runInAction(() => {
         store.value = text;
@@ -59,11 +58,11 @@ export const HexdumpTextArea = observer((props: HexdumpTextAreaProps) => {
     });
     return { value: '' };
   });
-  const display = props.connection.rows.length > 0 ? 'block' : 'none';
+  const display = props.connection.rows.length > 0 ? 'inline-block' : 'none';
   return (
     <Input.TextArea
       style={{
-        display: display,
+        display,
         fontFamily:
           'Consolas,Monaco,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace',
       }}
