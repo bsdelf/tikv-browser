@@ -58,7 +58,7 @@ const DataTab = observer((props: DataTabProps) => {
   const defaultEncoding = encodings[0];
   const data = new HumanReadableData({
     data: props.data,
-    fromEncoding: defaultEncoding.value,
+    encoding: defaultEncoding.value,
   });
 
   const store = useLocalStore(() => ({
@@ -68,7 +68,7 @@ const DataTab = observer((props: DataTabProps) => {
   const onEncodingSelect = (encoding: Encoding) => {
     const data = new HumanReadableData({
       data: props.data,
-      fromEncoding: encoding.value,
+      encoding: encoding.value,
     });
     runInAction(() => {
       store.value = data.text;

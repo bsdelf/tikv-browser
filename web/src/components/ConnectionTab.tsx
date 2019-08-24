@@ -1,7 +1,7 @@
 import React from 'react';
 import { Row, Col } from 'antd';
 import SearchForm from './SearchForm';
-import { HexdumpTextArea } from './HexdumpTextArea';
+import CellForm from './CellForm';
 import SearchTable from './SearchTable';
 import { Connection } from '../store';
 
@@ -20,7 +20,7 @@ export const ConnectionTab = ({ connection }: { connection: Connection }) => (
         <SearchForm connection={connection} />
       </Col>
       <Col span={14}>
-        <HexdumpTextArea connection={connection} />
+        <CellForm connection={connection} />
       </Col>
     </Row>
     <div className="SearchTableWrapper">
