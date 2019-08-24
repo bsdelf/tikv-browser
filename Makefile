@@ -1,8 +1,7 @@
 PROJECT_NAME ?= tikv-browser
 STAGING_DIR ?= ./staging
 
-BUILD_IMAGE ?= ${PROJECT_NAME}-build:latest
-RUN_IMAGE ?= ${PROJECT_NAME}-run:latest
+GOLANG_IMAGE ?= ${PROJECT_NAME}-golang:latest
 RELEASE_IMAGE ?= ${PROJECT_NAME}:latest
 
 BUILD_ARG_HTTP_PROXY ?= $(if ${http_proxy},--build-arg http_proxy=${http_proxy},)
@@ -17,7 +16,7 @@ all: server web
 
 .PHONY: server
 server:
-	go build -v -mod=vendor -o ${STAGING_DIR}/server ./cmd/server
+	go build -mod=vendor -v -o ${STAGING_DIR}/server ./cmd/server
 
 .PHONY: test
 test:
@@ -27,22 +26,19 @@ test:
 web:
 	npm run --prefix web build
 
-.PHONY: staging
-staging: server web
-
 .PHONY: clean
 clean:
 	rm -rf ${STAGING_DIR}
 	rm -rf web/build
 	go clean -cache ./cmd/server
 
-.PHONY: build-image
-build-image:
-	docker build -t ${BUILD_IMAGE} -f docker/build.Dockerfile ${BUILD_ARG_PROXY} .
+.PHONY: base-image
+base-image:
+	docker build -t ${GOLANG_IMAGE} -f docker/golang.Dockerfile ${BUILD_ARG_PROXY} .
 
-.PHONY: run-image
-run-image:
-	docker build -t ${RUN_IMAGE} -f docker/run.Dockerfile ${BUILD_ARG_PROXY} .
+.PHONY: release-image
+release-image:
+	docker build -t ${RELEASE_IMAGE} -f docker/release.Dockerfile ${BUILD_ARG_PROXY} .
 
 .PHONY: image
-image: build-image run-image
+image: base-image release-image
