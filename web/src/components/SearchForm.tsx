@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Select, Input, Slider, Button, Row, Col } from 'antd';
+import { Form, Select, Input, Slider, Button } from 'antd';
 import { action, runInAction } from 'mobx';
 import { useLocalStore, observer } from 'mobx-react-lite';
 import { Connection } from '../store';
@@ -66,7 +66,12 @@ const SearchForm = ({ connection }: { connection: Connection }) => {
       });
     };
     return (
-      <Button type="primary" onClick={onClick} loading={store.loading}>
+      <Button
+        className="App-button-default"
+        type="primary"
+        onClick={onClick}
+        loading={store.loading}
+      >
         Search
       </Button>
     );
@@ -79,7 +84,11 @@ const SearchForm = ({ connection }: { connection: Connection }) => {
       });
       connection.clear();
     };
-    return <Button onClick={onClick}>Clear</Button>;
+    return (
+      <Button className="App-button-default" onClick={onClick}>
+        Clear
+      </Button>
+    );
   };
 
   const SearchModeSelect = observer(() => {
@@ -164,14 +173,10 @@ const SearchForm = ({ connection }: { connection: Connection }) => {
         <ResultsLimitSlider />
       </Form.Item>
       <Form.Item {...tailFormItemLayout} style={{ marginBottom: 12 }}>
-        <Row gutter={16}>
-          <Col span={10}>
-            <SearchButton />
-          </Col>
-          <Col span={10}>
-            <ClearButton />
-          </Col>
-        </Row>
+        <div>
+          <SearchButton />
+          <ClearButton />
+        </div>
       </Form.Item>
     </Form>
   );

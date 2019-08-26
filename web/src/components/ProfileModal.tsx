@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Form, Input, Row, Col, Button } from 'antd';
+import { Modal, Form, Input, Button } from 'antd';
 import { runInAction, autorun } from 'mobx';
 import { observer, useLocalStore } from 'mobx-react-lite';
 
@@ -99,14 +99,23 @@ export const ProfileModal = observer((props: ProfileModalProps) => {
         });
     };
     return (
-      <Button type="primary" onClick={onClick} loading={store.loading}>
+      <Button
+        className="App-button-default"
+        type="primary"
+        onClick={onClick}
+        loading={store.loading}
+      >
         Ok
       </Button>
     );
   });
 
   const CancelButton = () => {
-    return <Button onClick={onClose}>Cancel</Button>;
+    return (
+      <Button className="App-button-default" onClick={onClose}>
+        Cancel
+      </Button>
+    );
   };
 
   const bindOnChange = (name: 'name' | 'endpoints' | 'tags') => {
@@ -140,14 +149,10 @@ export const ProfileModal = observer((props: ProfileModalProps) => {
           />
         </Form.Item>
         <Form.Item {...tailFormItemLayout} style={{ marginBottom: 0 }}>
-          <Row>
-            <Col span={6}>
-              <OkButton />
-            </Col>
-            <Col span={6}>
-              <CancelButton />
-            </Col>
-          </Row>
+          <div>
+            <OkButton />
+            <CancelButton />
+          </div>
         </Form.Item>
       </Form>
     </Modal>

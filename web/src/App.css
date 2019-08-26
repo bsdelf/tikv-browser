@@ -59,3 +59,7 @@
 .SearchTableWrapper {
   max-height: 600px;
 }
+
+.App-button-default {
+  margin-right: 12px;
+}
