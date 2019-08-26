@@ -49,6 +49,10 @@ export const ProfileModal = observer((props: ProfileModalProps) => {
   });
 
   const buildProfile = (): Profile => {
+    const name = store.name;
+    if (!name || /^\s+$/.test(name)) {
+      throw new Error('invalid name');
+    }
     const endpoints = store.endpoints.match(/[^\s]+/g);
     if (!endpoints) {
       throw new Error('invalid endpoints');
@@ -81,7 +85,6 @@ export const ProfileModal = observer((props: ProfileModalProps) => {
       });
       props.store
         .resolve(profile)
-        .catch(reason => Promise.reject(reason))
         .then(() => {
           runInAction(() => {
             store.loading = false;
@@ -89,6 +92,9 @@ export const ProfileModal = observer((props: ProfileModalProps) => {
           });
         })
         .catch(reason => {
+          runInAction(() => {
+            store.loading = false;
+          });
           alert(reason);
         });
     };
@@ -115,12 +121,12 @@ export const ProfileModal = observer((props: ProfileModalProps) => {
     <Modal visible={props.store.visiable} okText="Add" onCancel={onClose} width={480} footer={null}>
       <Form {...formItemLayout}>
         <Form.Item label="Name" style={{ marginBottom: 12 }}>
-          <Input placeholder="Name" value={store.name} onChange={bindOnChange('name')} />
+          <Input placeholder="profile name" value={store.name} onChange={bindOnChange('name')} />
         </Form.Item>
         <Form.Item label="Endpoints" style={{ marginBottom: 12 }}>
           <Input.TextArea
             rows={4}
-            placeholder="Input whitespace separated endpoints here"
+            placeholder="whitespace separated endpoints"
             value={store.endpoints}
             onChange={bindOnChange('endpoints')}
           />
@@ -128,7 +134,7 @@ export const ProfileModal = observer((props: ProfileModalProps) => {
         <Form.Item label="Tags" style={{ marginBottom: 12 }}>
           <Input.TextArea
             rows={4}
-            placeholder="Input whitespace separated tags here"
+            placeholder="whitespace separated tags"
             value={store.tags}
             onChange={bindOnChange('tags')}
           />
