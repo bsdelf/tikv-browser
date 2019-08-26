@@ -19,7 +19,7 @@ export const ConnectionTab = ({ connection }: { connection: Connection }) => (
       <Col span={10} style={{ minWidth: 320 }}>
         <SearchForm connection={connection} />
       </Col>
-      <Col span={14}>
+      <Col span={14} style={{ maxWidth: 450 }}>
         <CellForm connection={connection} />
       </Col>
     </Row>

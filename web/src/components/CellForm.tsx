@@ -1,16 +1,13 @@
 import React from 'react';
-import { Input, Form, Select } from 'antd';
+import { Input, Form, Select, Row, Col } from 'antd';
 import { autorun, runInAction } from 'mobx';
 import { observer, useLocalStore } from 'mobx-react-lite';
 import { Connection } from '../store';
 import { HumanReadableData } from '../utils';
 
-interface HexdumpTextAreaProps {
-  connection: Connection;
-}
-
 interface CellFormProps {
   connection: Connection;
+  style?: React.CSSProperties;
 }
 
 const { Option } = Select;
@@ -45,10 +42,10 @@ export const CellForm = observer((props: CellFormProps) => {
   const display = props.connection.rows.length > 0 ? 'block' : 'none';
   const formItemLayout = {
     labelCol: {
-      span: 4,
+      span: 0,
     },
     wrapperCol: {
-      span: 20,
+      span: 24,
     },
   };
   const DecoderSelect = observer(() => {
@@ -72,17 +69,22 @@ export const CellForm = observer((props: CellFormProps) => {
     );
   });
   return (
-    <Form style={{ display }} labelAlign="left">
-      <Form.Item label="Decoder" style={{ marginBottom: 12 }} {...formItemLayout}>
-        <DecoderSelect />
+    <Form style={{ display, ...props.style }} labelAlign="left">
+      <Form.Item label="" style={{ marginBottom: 12 }} {...formItemLayout}>
+        <div style={{ width: '100%', display: 'flex' }}>
+          <span style={{ float: 'left', color: 'rgba(0,0,0,0.85)', marginRight: 8 }}>Decoder:</span>
+          <div style={{ display: 'inline-block', flexGrow: 100 }}>
+            <DecoderSelect />
+          </div>
+        </div>
       </Form.Item>
-      <Form.Item>
+      <Form.Item style={{ marginBottom: 0 }}>
         <Input.TextArea
           style={{
             fontFamily:
               'Consolas,Monaco,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace',
           }}
-          rows={12}
+          rows={11}
           readOnly={true}
           placeholder="click on table cell to show its contents"
           value={store.value}
