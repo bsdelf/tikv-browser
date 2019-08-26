@@ -73,4 +73,5 @@ export class HumanReadableData {
   }
 }
 
+export * from './utf8';
 export default { HumanReadableData };

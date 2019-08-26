@@ -1,10 +1,11 @@
 import React from 'react';
 import { Table, Button, Row, Col, Popconfirm } from 'antd';
+import { PaginationConfig } from 'antd/lib/table';
 import { runInAction, toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
 
 import { Connection } from '../store';
-import { PaginationConfig } from 'antd/lib/table';
+import { isUtf8 } from '../utils';
 
 const pageSize = 10;
 
@@ -63,11 +64,11 @@ const toText = (data: Uint8Array, limit: number) => {
 const toSpan = (data: Uint8Array, limit: number, onClick: () => void) => {
   let style = {};
   let text: string;
-  if (data.length > 1024) {
+  if (data.length < 1024 && isUtf8(data)) {
+    text = toText(data, limit);
+  } else {
     text = '<blob>';
     style = { fontStyle: 'italic', color: 'gray' };
-  } else {
-    text = toText(data, limit);
   }
   return (
     <span onClick={onClick} style={style}>
