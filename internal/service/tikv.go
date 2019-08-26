@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 	"sync"
+	"time"
 
 	tikvConfig "github.com/tikv/client-go/config"
 	"github.com/tikv/client-go/txnkv"
@@ -23,7 +24,9 @@ func UseTikvClient(endpoints []string, callback TikvClientCallback) {
 	if value, ok := tikvClients.Load(key); ok {
 		cli = value.(*txnkv.Client)
 	} else {
-		cli, err = txnkv.NewClient(context.TODO(), endpoints, tikvConfig.Default())
+		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		defer cancel()
+		cli, err = txnkv.NewClient(ctx, endpoints, tikvConfig.Default())
 		if err == nil {
 			if actual, loaded := tikvClients.LoadOrStore(key, cli); loaded {
 				cli.Close()
