@@ -31,7 +31,9 @@ export const ProfileList = observer(() => {
   };
 
   const onDelete = (profile: Profile) => {
-    profiles.remove(profile);
+    profiles.remove(profile).catch(reason => {
+      alert(reason);
+    });
   };
 
   const listRender = (item: Profile) => {

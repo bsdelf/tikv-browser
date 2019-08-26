@@ -55,7 +55,10 @@ const SearchForm = ({ connection }: { connection: Connection }) => {
             contents: store.keyContents,
             limit: store.resultsLimit,
           })
-          .then(
+          .catch(reason => {
+            alert(reason);
+          })
+          .finally(
             action(() => {
               store.loading = false;
             })

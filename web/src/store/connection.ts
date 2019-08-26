@@ -40,9 +40,6 @@ export class Connection {
           this.keys.replace(result || []);
         })
       )
-      .catch(reason => {
-        alert(reason);
-      })
       .then(
         action(() => {
           return this.fetchPage({
@@ -51,7 +48,7 @@ export class Connection {
           });
         })
       )
-      .then(
+      .finally(
         action(() => {
           this.loading.set(false);
         })
@@ -101,12 +98,11 @@ export class Connection {
           this.pagination.total = this.keys.length;
         });
       })
-      .catch(err => {
-        alert(err);
-      });
-    runInAction(() => {
-      this.loading.set(false);
-    });
+      .finally(
+        action(() => {
+          this.loading.set(false);
+        })
+      );
   }
 }
 

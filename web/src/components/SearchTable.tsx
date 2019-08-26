@@ -122,10 +122,14 @@ const SearchTable = observer(({ connection }: { connection: Connection }) => {
     if (!config || typeof config.current !== 'number') {
       return;
     }
-    connection.fetchPage({
-      page: config.current,
-      size: pageSize,
-    });
+    connection
+      .fetchPage({
+        page: config.current,
+        size: pageSize,
+      })
+      .catch(reason => {
+        alert(reason);
+      });
   };
 
   return (

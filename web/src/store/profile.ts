@@ -51,9 +51,6 @@ class Profiles {
         runInAction(() => {
           this.data.splice(idx, 1);
         });
-      })
-      .catch(reason => {
-        alert(reason);
       });
   }
 
