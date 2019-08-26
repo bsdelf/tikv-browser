@@ -3,7 +3,7 @@ import { fromByteArray } from 'base64-js';
 const toHex = (num: number) => num.toString(16).padStart(2, '0');
 
 const toPrintableAscii = (num: number) => {
-  if (num > 0x20 && num < 0x7f) {
+  if (num >= 0x20 && num < 0x7f) {
     return String.fromCharCode(num);
   } else {
     return '.';
