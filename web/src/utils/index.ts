@@ -26,7 +26,7 @@ const toHexdump = (bytes: Uint8Array) => {
       ascii += toPrintableAscii(data[k]);
     }
     hex = hex.padEnd(nRowBytes * 3, ' ');
-    ascii = ascii.padEnd(8, ' ');
+    // ascii = ascii.padEnd(8, ' ');
     const line = `${no}  ${hex} |${ascii}|`;
     rows.push(line);
   }
